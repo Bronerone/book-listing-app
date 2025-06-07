@@ -98,10 +98,3 @@ Books fetched from: https://raw.githubusercontent.com/benoitvallon/100-best-book
 ### Data Flow
 User Input → State Update → Filter Logic → Re-render Components
 ```
-
-Now commit the fix:
-
-```bash
-git add README.md
-git commit -m "Fix README markdown formatting for pseudo code section"
-git push origin main
