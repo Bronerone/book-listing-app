@@ -32,147 +32,76 @@ src/app/
 Books fetched from: https://raw.githubusercontent.com/benoitvallon/100-best-books/master/books.json
 ```
 
-And here's the **Pseudo Code** for bonus points:
+## Pseudo Code
 
-```javascript:PSEUDOCODE.md
-# Book Listing Application - Pseudo Code
+### Main Application Logic
 
-## Main Application Logic
+**Initialize App Component:**
+- STATE books = []
+- STATE filteredBooks = []
+- STATE currentPage = 1
+- STATE searchTerm = ""
+- STATE filters = { country: "", language: "", pageRange: "", century: "" }
 
-```
-INITIALIZE App Component:
-  STATE books = []
-  STATE filteredBooks = []
-  STATE currentPage = 1
-  STATE searchTerm = ""
-  STATE filters = {
-    country: "",
-    language: "", 
-    pageRange: "",
-    century: ""
-  }
+**On Component Mount:**
+- CALL fetchBooks()
 
-ON Component Mount:
-  CALL fetchBooks()
+**fetchBooks() Function:**
+- TRY: FETCH data from API endpoint
+- SET books = response data
+- SET filteredBooks = books
+- CATCH: Handle errors
 
-FUNCTION fetchBooks():
-  TRY:
-    response = FETCH("https://raw.githubusercontent.com/benoitvallon/100-best-books/master/books.json")
-    data = AWAIT response.json()
-    SET books = data
-    SET filteredBooks = data
-  CATCH error:
-    CONSOLE.LOG("Error fetching books")
-    SET books = []
+**handleSearch(searchValue) Function:**
+- SET searchTerm = searchValue
+- CALL applyFiltersAndSearch()
 
-FUNCTION handleSearch(searchValue):
-  SET searchTerm = searchValue
-  CALL applyFiltersAndSearch()
+**handleFilterChange(newFilters) Function:**
+- SET filters = newFilters
+- CALL applyFiltersAndSearch()
 
-FUNCTION handleFilterChange(newFilters):
-  SET filters = newFilters
-  CALL applyFiltersAndSearch()
+**applyFiltersAndSearch() Function:**
+- START with result = books
+- IF searchTerm NOT empty: FILTER by title OR author
+- IF filters.country NOT empty: FILTER by country
+- IF filters.language NOT empty: FILTER by language
+- IF filters.pageRange NOT empty: FILTER by page range
+- IF filters.century NOT empty: FILTER by century
+- SET filteredBooks = result
+- SET currentPage = 1
 
-FUNCTION applyFiltersAndSearch():
-  result = books
-  
-  // Apply search
-  IF searchTerm NOT empty:
-    result = FILTER result WHERE (
-      title CONTAINS searchTerm OR 
-      author CONTAINS searchTerm
-    )
-  
-  // Apply filters
-  IF filters.country NOT empty:
-    result = FILTER result WHERE country EQUALS filters.country
-  
-  IF filters.language NOT empty:
-    result = FILTER result WHERE language EQUALS filters.language
-  
-  IF filters.pageRange NOT empty:
-    result = FILTER result WHERE pages IN selected range
-  
-  IF filters.century NOT empty:
-    result = FILTER result WHERE year IN selected century
-  
-  SET filteredBooks = result
-  SET currentPage = 1
+**handlePageChange(page) Function:**
+- SET currentPage = page
 
-FUNCTION handlePageChange(page):
-  SET currentPage = page
+**getPaginatedBooks() Function:**
+- CALCULATE startIndex = (currentPage - 1) * 20
+- CALCULATE endIndex = startIndex + 20
+- RETURN filteredBooks.slice(startIndex, endIndex)
 
-FUNCTION getPaginatedBooks():
-  startIndex = (currentPage - 1) * 20
-  endIndex = startIndex + 20
-  RETURN filteredBooks.slice(startIndex, endIndex)
+### Component Structure
 
-RENDER:
-  <Header with search input>
-  <FilterPanel with dropdowns>
-  <BookList with getPaginatedBooks()>
-  <Pagination controls>
-```
+**BookCard Component:**
+- PROPS: book object
+- STATE: imageError = false
+- RENDER: Card with image, title, author, details, country badge, Wikipedia link
 
-## Component Pseudo Code
+**FilterPanel Component:**
+- PROPS: books, filters, onFilterChange
+- COMPUTE: unique countries and languages from books
+- RENDER: Dropdown selects for country, language, page range, century
 
-### BookCard Component:
-```
-PROPS: book object
-STATE: imageError = false
+**Pagination Component:**
+- PROPS: currentPage, totalPages, onPageChange, totalItems
+- COMPUTE: startItem and endItem for display
+- RENDER: Previous/Next buttons and page info
 
-RENDER:
-  <Card container>
-    IF book.imageLink AND NOT imageError:
-      <Image with onError handler>
-    ELSE:
-      <Placeholder icon>
-    
-    <Book details: title, author, year, pages, language>
-    <Country badge>
-    <Wikipedia link IF book.link exists>
-```
-
-### FilterPanel Component:
-```
-PROPS: books, filters, onFilterChange
-
-COMPUTE:
-  countries = UNIQUE values from books.country
-  languages = UNIQUE values from books.language
-
-RENDER:
-  <Country dropdown>
-  <Language dropdown>  
-  <Page range dropdown>
-  <Century dropdown>
-  <Clear filters button>
-```
-
-### Pagination Component:
-```
-PROPS: currentPage, totalPages, onPageChange, totalItems
-
-COMPUTE:
-  startItem = (currentPage - 1) * 20 + 1
-  endItem = MIN(currentPage * 20, totalItems)
-
-RENDER:
-  <Items count display>
-  <Previous button>
-  <Page info>
-  <Next button>
-```
-
-## Data Flow:
-```
+### Data Flow
 User Input → State Update → Filter Logic → Re-render Components
 ```
-```
 
-Now commit both files:
+Now commit the fix:
 
 ```bash
-git add README.md PSEUDOCODE.md
-git commit -m "Add README and pseudo code documentation"
+git add README.md
+git commit -m "Fix README markdown formatting for pseudo code section"
 git push origin main
