@@ -3,7 +3,6 @@ import { useState } from 'react';
 export default function BookCard({ book }) {
   const [imageError, setImageError] = useState(false);
 
-  // Fix the image path to point to public folder
   const imageUrl = book.imageLink ? `/images/${book.imageLink.split('/').pop()}` : null;
 
   return (
