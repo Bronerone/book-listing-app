@@ -1,36 +1,178 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Book Listing Application
+
+A responsive web application to display and filter a list of the 100 best books using Next.js.
+
+## Technologies Used
+
+- **Framework:** Next.js (React)
+- **Styling:** Tailwind CSS
+- **Language:** JavaScript
+- **Data Source:** https://github.com/benoitvallon/100-best-books/blob/master/books.json
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Run development server: `npm run dev`
+4. Open http://localhost:3000
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Project Structure
+
+```
+src/app/
+├── BookCard.js      # Individual book display
+├── FilterPanel.js   # Filter controls
+├── Pagination.js    # Page navigation
+├── bookData.js      # Data fetching
+└── page.js          # Main component
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Data Source
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Books fetched from: https://raw.githubusercontent.com/benoitvallon/100-best-books/master/books.json
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+And here's the **Pseudo Code** for bonus points:
 
-## Learn More
+```javascript:PSEUDOCODE.md
+# Book Listing Application - Pseudo Code
 
-To learn more about Next.js, take a look at the following resources:
+## Main Application Logic
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+INITIALIZE App Component:
+  STATE books = []
+  STATE filteredBooks = []
+  STATE currentPage = 1
+  STATE searchTerm = ""
+  STATE filters = {
+    country: "",
+    language: "", 
+    pageRange: "",
+    century: ""
+  }
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+ON Component Mount:
+  CALL fetchBooks()
 
-## Deploy on Vercel
+FUNCTION fetchBooks():
+  TRY:
+    response = FETCH("https://raw.githubusercontent.com/benoitvallon/100-best-books/master/books.json")
+    data = AWAIT response.json()
+    SET books = data
+    SET filteredBooks = data
+  CATCH error:
+    CONSOLE.LOG("Error fetching books")
+    SET books = []
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+FUNCTION handleSearch(searchValue):
+  SET searchTerm = searchValue
+  CALL applyFiltersAndSearch()
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+FUNCTION handleFilterChange(newFilters):
+  SET filters = newFilters
+  CALL applyFiltersAndSearch()
+
+FUNCTION applyFiltersAndSearch():
+  result = books
+  
+  // Apply search
+  IF searchTerm NOT empty:
+    result = FILTER result WHERE (
+      title CONTAINS searchTerm OR 
+      author CONTAINS searchTerm
+    )
+  
+  // Apply filters
+  IF filters.country NOT empty:
+    result = FILTER result WHERE country EQUALS filters.country
+  
+  IF filters.language NOT empty:
+    result = FILTER result WHERE language EQUALS filters.language
+  
+  IF filters.pageRange NOT empty:
+    result = FILTER result WHERE pages IN selected range
+  
+  IF filters.century NOT empty:
+    result = FILTER result WHERE year IN selected century
+  
+  SET filteredBooks = result
+  SET currentPage = 1
+
+FUNCTION handlePageChange(page):
+  SET currentPage = page
+
+FUNCTION getPaginatedBooks():
+  startIndex = (currentPage - 1) * 20
+  endIndex = startIndex + 20
+  RETURN filteredBooks.slice(startIndex, endIndex)
+
+RENDER:
+  <Header with search input>
+  <FilterPanel with dropdowns>
+  <BookList with getPaginatedBooks()>
+  <Pagination controls>
+```
+
+## Component Pseudo Code
+
+### BookCard Component:
+```
+PROPS: book object
+STATE: imageError = false
+
+RENDER:
+  <Card container>
+    IF book.imageLink AND NOT imageError:
+      <Image with onError handler>
+    ELSE:
+      <Placeholder icon>
+    
+    <Book details: title, author, year, pages, language>
+    <Country badge>
+    <Wikipedia link IF book.link exists>
+```
+
+### FilterPanel Component:
+```
+PROPS: books, filters, onFilterChange
+
+COMPUTE:
+  countries = UNIQUE values from books.country
+  languages = UNIQUE values from books.language
+
+RENDER:
+  <Country dropdown>
+  <Language dropdown>  
+  <Page range dropdown>
+  <Century dropdown>
+  <Clear filters button>
+```
+
+### Pagination Component:
+```
+PROPS: currentPage, totalPages, onPageChange, totalItems
+
+COMPUTE:
+  startItem = (currentPage - 1) * 20 + 1
+  endItem = MIN(currentPage * 20, totalItems)
+
+RENDER:
+  <Items count display>
+  <Previous button>
+  <Page info>
+  <Next button>
+```
+
+## Data Flow:
+```
+User Input → State Update → Filter Logic → Re-render Components
+```
+```
+
+Now commit both files:
+
+```bash
+git add README.md PSEUDOCODE.md
+git commit -m "Add README and pseudo code documentation"
+git push origin main
